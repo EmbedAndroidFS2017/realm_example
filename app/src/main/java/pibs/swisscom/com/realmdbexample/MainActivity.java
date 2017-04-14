@@ -1,48 +1,54 @@
 package pibs.swisscom.com.realmdbexample;
 
-import android.app.Activity;
 import android.app.ListActivity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 
 import java.util.ArrayList;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
-import pibs.swisscom.com.realmdbexample.Model.Student;
+import pibs.swisscom.com.realmdbexample.models.Student;
 
 public class MainActivity extends ListActivity {
-    ArrayList<Student> students;
     Realm realm;
+    ArrayList<Student> students;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Realm.init(this);
     }
 
     @Override
     protected void onResume() {
+        // Realm has to be initialized before this (see RealmDbExampleApplication.java)
         realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        for(int i = 0; i < 10; i++) {
-            Student st = new Student();
-            st.name = "Name " + i;
-            st.surname = "Surname " + i;
-            realm.copyToRealmOrUpdate(st);
-        }
-        realm.commitTransaction();
-
-        // Es macht keinen Sinn die Liste zuerst in der DB zu speichern, dann auszulesen und anzuzeigen
-        // Hier nur Demo-Zweck
 
         RealmResults<Student> result = realm.where(Student.class).findAll();
         students = new ArrayList<>(result);
 
-        ArrayAdapter<Student> adapter = new ArrayAdapter<Student>(this, android.R.layout.simple_list_item_1, students);
+        ArrayAdapter<Student> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, students);
         this.setListAdapter(adapter);
         super.onResume();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == R.id.action_add) {
+            Intent intent = new Intent(this, AddStudentActivity.class);
+            startActivity(intent);
+        }
+        return true;
     }
 
     @Override

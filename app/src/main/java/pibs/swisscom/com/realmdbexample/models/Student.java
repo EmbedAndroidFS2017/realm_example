@@ -1,4 +1,4 @@
-package pibs.swisscom.com.realmdbexample.Model;
+package pibs.swisscom.com.realmdbexample.models;
 
 import java.util.UUID;
 
@@ -8,8 +8,9 @@ import io.realm.annotations.PrimaryKey;
 public class Student extends RealmObject {
     @PrimaryKey
     private long id;
-    public String name;
-    public String surname;
+    public String fullName;
+    public String email;
+    public int age;
 
     public Student() {
         id = UUID.randomUUID().getMostSignificantBits();
